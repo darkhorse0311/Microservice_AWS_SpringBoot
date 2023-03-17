@@ -6,6 +6,8 @@ import software.amazon.awscdk.services.ec2.Vpc;
 import software.constructs.Construct;
 
 public class VpcStack extends Stack {
+
+    private Vpc vpc;
     public VpcStack(final Construct scope, final String id) {
         this(scope, id, null);
     }
@@ -13,8 +15,14 @@ public class VpcStack extends Stack {
     public VpcStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        Vpc.Builder.create(this, "Vpc01")
+        vpc = Vpc.Builder.create(this, "Vpc01")
                 .maxAzs(3)
+                .natGateways(0) //O natGateways afeta na cobrança independente da utilização, nesse caso desabilitamos o mesmo para evitar cobranças: https://aws.amazon.com/vpc/pricing/
                 .build();
     }
+
+    public Vpc getVpc() {
+        return this.vpc;
+    }
+
 }
