@@ -2,11 +2,11 @@ package br.com.lucio.service01;
 
 import java.util.UUID;
 
-public class Test {
+public class Person {
 
     private UUID id;
     private String name;
-    public Test(UUID uuid, String name) {
+    public Person(UUID uuid, String name) {
         this.id = uuid;
         this.name = name;
     }
@@ -27,5 +27,8 @@ public class Test {
         this.name = name;
     }
 
-
+    @Override
+    public String toString() {
+        return "{\"id\":" + this.id + "\", name\": " + this.name + "}";
+    }
 }
