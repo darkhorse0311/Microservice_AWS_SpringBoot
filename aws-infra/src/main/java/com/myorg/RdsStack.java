@@ -15,7 +15,7 @@ public class RdsStack extends Stack {
     public RdsStack(final Construct scope, final String id, final StackProps props, Vpc vpc) {
         super(scope, id, props);
 
-        CfnParameter datadabasePassoword = CfnParameter.Builder.create(this, "databasePassword")
+        CfnParameter database = CfnParameter.Builder.create(this, "databasePassword")
                 .type("String")
                 .description("RDS instance password")
                 .build();
@@ -32,7 +32,7 @@ public class RdsStack extends Stack {
                 .vpc(vpc)
                 .credentials(Credentials.fromUsername("admin",
                         CredentialsFromUsernameOptions.builder()
-                                .password(SecretValue.plainText(datadabasePassoword.getValueAsString()))
+                                .password(SecretValue.plainText(database.getValueAsString()))
                                 .build()))
                 .instanceType(InstanceType.of(InstanceClass.BURSTABLE2, InstanceSize.MICRO))
                 .multiAz(Boolean.FALSE)
@@ -52,7 +52,7 @@ public class RdsStack extends Stack {
         //Exporta a senha do banco para conseguir acessar na classe do service01
         CfnOutput.Builder.create(this, "rds-password")
                 .exportName("rds-password")
-                .value(databaseInstance.getDbInstanceEndpointAddress())
+                .value(database.getValueAsString())
                 .build();
 
     }
