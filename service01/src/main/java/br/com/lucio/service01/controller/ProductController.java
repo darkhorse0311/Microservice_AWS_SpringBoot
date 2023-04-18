@@ -1,8 +1,9 @@
 package br.com.lucio.service01.controller;
 
+import br.com.lucio.service01.enums.EventType;
 import br.com.lucio.service01.model.Product;
 import br.com.lucio.service01.repository.ProductRepository;
-import org.springframework.http.HttpStatus;
+import br.com.lucio.service01.service.ProductCrudEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class ProductController {
 
     private ProductRepository productRepository;
+    private ProductCrudEventPublisher productCrudEventPublisher;
 
-    public ProductController(ProductRepository productRepository) {
+    public ProductController(ProductRepository productRepository, ProductCrudEventPublisher productCrudEventPublisher) {
         this.productRepository = productRepository;
+        this.productCrudEventPublisher = productCrudEventPublisher;
     }
 
     @GetMapping
@@ -39,6 +42,7 @@ public class ProductController {
     public ResponseEntity<Product> create(@RequestBody Product product, UriComponentsBuilder uriBuilder) {
         Product productCreated = productRepository.save(product);
         URI uri = uriBuilder.path("/api/products/{id}").buildAndExpand(productCreated.getId()).toUri();
+        productCrudEventPublisher.publishEvent(productCreated, EventType.CREATED);
         return ResponseEntity.created(uri).body(productCreated);
     }
 
@@ -47,20 +51,23 @@ public class ProductController {
         if (productRepository.existsById(id)) {
             product.setId(id);
             Product productUpdated = productRepository.save(product);
+            productCrudEventPublisher.publishEvent(productUpdated, EventType.UPDATED);
             return ResponseEntity.ok(productUpdated);
         }
 
         return ResponseEntity.notFound().build();
-
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Product> delete(@PathVariable Long id) {
-        if (productRepository.existsById(id)) {
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isPresent()) {
             productRepository.deleteById(id);
+            productCrudEventPublisher.publishEvent(product.get(), EventType.UPDATED);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+
     }
 
 }
