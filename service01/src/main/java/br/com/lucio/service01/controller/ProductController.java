@@ -63,7 +63,7 @@ public class ProductController {
         Optional<Product> product = productRepository.findById(id);
         if(product.isPresent()) {
             productRepository.deleteById(id);
-            productCrudEventPublisher.publishEvent(product.get(), EventType.UPDATED);
+            productCrudEventPublisher.publishEvent(product.get(), EventType.DELETED);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

@@ -2,7 +2,7 @@ package br.com.lucio.service01.model;
 
 import br.com.lucio.service01.enums.EventType;
 
-public class ProductEventDTO {
+public class CrudEventDTO {
 
     private EventType eventType;
     private String data;

@@ -3,7 +3,7 @@ package br.com.lucio.service01.service;
 import br.com.lucio.service01.enums.EventType;
 import br.com.lucio.service01.model.Product;
 import br.com.lucio.service01.model.ProductDTO;
-import br.com.lucio.service01.model.ProductEventDTO;
+import br.com.lucio.service01.model.CrudEventDTO;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.Topic;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,13 +38,13 @@ public class ProductCrudEventPublisher {
         productDTO.setCode(product.getCode());
         productDTO.setUsername("rodrigo.lucio@lucio.com.br");
 
-        ProductEventDTO productEvent = new ProductEventDTO();
-        productEvent.setEventType(eventType);
+        CrudEventDTO crudEvent = new CrudEventDTO();
+        crudEvent.setEventType(eventType);
 
         try {
-            String data = objectMapper.writeValueAsString(productEvent);
-            productEvent.setData(data);
-            snsClient.publish(productEventsTopic.getTopicArn(), data);
+            crudEvent.setData(objectMapper.writeValueAsString(productDTO));
+
+            snsClient.publish(productEventsTopic.getTopicArn(), objectMapper.writeValueAsString(crudEvent));
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

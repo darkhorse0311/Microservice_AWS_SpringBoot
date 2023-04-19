@@ -16,7 +16,7 @@ public class SnsConfig {
     @Value("${aws.region}")
     private String awsRegion;
 
-    @Value("${product-events}")
+    @Value("${aws.sns.topic.product.events.arn}")
     private String productEventsTopic;
 
     @Bean
