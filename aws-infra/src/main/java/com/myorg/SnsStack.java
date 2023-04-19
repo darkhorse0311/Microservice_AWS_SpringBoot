@@ -35,7 +35,7 @@ public class SnsStack extends Stack {
 
     }
 
-    private SnsTopic getProductEventsTopic() {
+    public SnsTopic getProductEventsTopic() {
         return this.productEventsTopic;
     }
 
