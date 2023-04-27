@@ -8,6 +8,10 @@ import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedTaskI
 import software.amazon.awscdk.services.elasticloadbalancingv2.HealthCheck;
 import software.amazon.awscdk.services.events.targets.SnsTopic;
 import software.amazon.awscdk.services.logs.LogGroup;
+import software.amazon.awscdk.services.sns.subscriptions.SqsSubscription;
+import software.amazon.awscdk.services.sqs.DeadLetterQueue;
+import software.amazon.awscdk.services.sqs.Queue;
+import software.amazon.awscdk.services.sqs.QueueEncryption;
 import software.constructs.Construct;
 
 import java.util.HashMap;
@@ -18,15 +22,37 @@ public class Service02Stack extends Stack {
     public static final String ACTUATOR_HEALTH = "/actuator/health";
     public static final String ACTUATOR_PORT = "8081";
 
-    public Service02Stack(final Construct scope, final String id, Cluster cluster) {
-        this(scope, id, null, cluster);
+    public Service02Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productEventsToppic) {
+        this(scope, id, null, cluster, productEventsToppic);
     }
 
-    public Service02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster) {
+    public Service02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productEventsToppic) {
         super(scope, id, props);
+
+        Queue productEventsDql = Queue.Builder.create(this, "ProductEventsDlq")
+                .queueName("product-events-dql")
+                .enforceSsl(false)
+                .encryption(QueueEncryption.UNENCRYPTED)
+                .build();
+
+        DeadLetterQueue deadLetterQueue = DeadLetterQueue.builder()
+                .queue(productEventsDql)
+                .maxReceiveCount(3) //Quantas exceptions vai acontecer para que a mensagem caia na dql
+                .build();
+
+        Queue productEventsQueue = Queue.Builder.create(this, "ProductEventsD")
+                .queueName("product-events")
+                .enforceSsl(false)
+                .encryption(QueueEncryption.UNENCRYPTED)
+                .deadLetterQueue(deadLetterQueue)
+                .build();
+
+        SqsSubscription sqsSubscription = SqsSubscription.Builder.create(productEventsQueue).build();
+        productEventsToppic.getTopic().addSubscription(sqsSubscription);
 
         Map<String, String> environments = new HashMap<>();
         environments.put("AWS_REGION",  "us-east-1");
+        environments.put("AWS_SQS_QUEUE_PRODUCT_EVENTS_NAME", productEventsQueue.getQueueName());
 
         ApplicationLoadBalancedFargateService service02 = ApplicationLoadBalancedFargateService.Builder
                 .create(this, "ALB02")
