@@ -1,8 +1,12 @@
-package br.com.lucio.service02.config;
+package br.com.lucio.service02.config.mock;
 
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +20,8 @@ import javax.jms.Session;
 
 @Configuration
 @EnableJms
-@Profile("!dev")
-public class JmsConfig {
+@Profile("dev")
+public class JmsMockConfig {
 
     @Value("${aws.region}")
     private String awsRegion;
@@ -28,10 +32,13 @@ public class JmsConfig {
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         sqsConnectionFactory = new SQSConnectionFactory(
                 new ProviderConfiguration(),
-                AmazonSQSClientBuilder.standard()
-                        .withRegion(awsRegion)
-                        .withCredentials(new DefaultAWSCredentialsProviderChain())
-                        .build());
+                AmazonSQSClient.builder()
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration(
+                                "http://localhost:4566",
+                                Regions.US_EAST_1.getName()))
+                .withCredentials(new DefaultAWSCredentialsProviderChain())
+                .build());
 
         DefaultJmsListenerContainerFactory factory =
                 new DefaultJmsListenerContainerFactory();
