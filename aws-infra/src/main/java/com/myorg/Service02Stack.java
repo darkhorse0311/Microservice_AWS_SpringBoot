@@ -66,7 +66,7 @@ public class Service02Stack extends Stack {
                 .taskImageOptions(
                         ApplicationLoadBalancedTaskImageOptions.builder()
                                 .containerName("aws_project02")
-                                .image(ContainerImage.fromRegistry("rodrigolucio/service02:0.0.1"))
+                                .image(ContainerImage.fromRegistry("rodrigolucio/service02:0.0.2"))
                                 .containerPort(8081)
                                 .logDriver(LogDriver.awsLogs(AwsLogDriverProps.builder()
                                                 .logGroup(LogGroup.Builder.create(this, "Service02LogGroup")
@@ -100,6 +100,7 @@ public class Service02Stack extends Stack {
                         .scaleOutCooldown(Duration.seconds(60))
                 .build());
 
+        productEventsQueue.grantConsumeMessages(service02.getTaskDefinition().getTaskRole());
 
     }
 }
