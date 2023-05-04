@@ -29,7 +29,7 @@ public class ProductEventConsumer {
         SnsMessage snsMessage = objectMapper.readValue(textMessage.getText(), SnsMessage.class);
         CrudEventDTO crudEventDTO = objectMapper.readValue(snsMessage.getMessage(), CrudEventDTO.class);
         ProductDTO productDTO = objectMapper.readValue(crudEventDTO.getData(), ProductDTO.class);
-        log.info("Product event received - Event: {} - ProductId: {} - MessageI: {}",
+        log.info("Product event received - Event: {} - ProductId: {} - MessageId: {}",
                 crudEventDTO.getEventType(), productDTO.getId(), snsMessage.getMessageId());
     }
 

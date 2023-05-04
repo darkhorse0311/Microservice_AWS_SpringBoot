@@ -40,7 +40,7 @@ public class Service02Stack extends Stack {
                 .maxReceiveCount(3) //Quantas exceptions vai acontecer para que a mensagem caia na dql
                 .build();
 
-        Queue productEventsQueue = Queue.Builder.create(this, "ProductEventsD")
+        Queue productEventsQueue = Queue.Builder.create(this, "ProductEvents")
                 .queueName("product-events")
                 .enforceSsl(false)
                 .encryption(QueueEncryption.UNENCRYPTED)

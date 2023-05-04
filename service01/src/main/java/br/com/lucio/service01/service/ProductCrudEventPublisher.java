@@ -5,6 +5,7 @@ import br.com.lucio.service01.model.Product;
 import br.com.lucio.service01.model.ProductDTO;
 import br.com.lucio.service01.model.CrudEventDTO;
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +45,8 @@ public class ProductCrudEventPublisher {
         try {
             crudEvent.setData(objectMapper.writeValueAsString(productDTO));
 
-            snsClient.publish(productEventsTopic.getTopicArn(), objectMapper.writeValueAsString(crudEvent));
+            PublishResult publish = snsClient.publish(productEventsTopic.getTopicArn(), objectMapper.writeValueAsString(crudEvent));
+            log.info("Product event published - Event: {} - ProductId: {} - MessageId: {}", eventType, productDTO.getId(), publish.getMessageId());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
