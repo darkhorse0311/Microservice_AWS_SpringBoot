@@ -27,7 +27,8 @@ public class AwsInfraApp {
 
         DynamoDbStack dynamoDbStack = new DynamoDbStack(app, "DynamoDb");
 
-        Service02Stack service02Stack = new Service02Stack(app, "Service02", clusterStack.getCluster(), snsStack.getProductEventsTopic());
+        Service02Stack service02Stack = new Service02Stack(app, "Service02", clusterStack.getCluster(),
+                snsStack.getProductEventsTopic(), dynamoDbStack.getProducEventsTable());
         service02Stack.addDependency(snsStack);
         service02Stack.addDependency(clusterStack);
         service02Stack.addDependency(dynamoDbStack);
