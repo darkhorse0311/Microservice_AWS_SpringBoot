@@ -1,4 +1,4 @@
-package br.com.lucio.service02.model;
+package br.com.lucio.service02.model.dynamo;
 
 import br.com.lucio.service02.enums.EventType;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;

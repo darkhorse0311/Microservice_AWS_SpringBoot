@@ -1,4 +1,4 @@
-package br.com.lucio.service02.model;
+package br.com.lucio.service02.model.dynamo;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
