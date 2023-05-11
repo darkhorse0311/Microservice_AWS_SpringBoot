@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 @DynamoDBTable(tableName = "product-events")
 public class ProductEvent {
 
+
+
     public ProductEvent() {
     }
 
@@ -19,6 +21,9 @@ public class ProductEvent {
 
     @DynamoDBAttribute(attributeName = "productId")
     private long productId;
+
+    @DynamoDBAttribute(attributeName = "messageId")
+    private String messageId;
 
     @DynamoDBAttribute(attributeName = "username")
     private String username;
@@ -72,6 +77,14 @@ public class ProductEvent {
         this.productId = productId;
     }
 
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -102,10 +115,10 @@ public class ProductEvent {
                 "productEventKey=" + productEventKey +
                 ", eventType=" + eventType +
                 ", productId=" + productId +
+                ", messageId='" + messageId + '\'' +
                 ", username='" + username + '\'' +
                 ", timestamp=" + timestamp +
                 ", ttl=" + ttl +
                 '}';
     }
-
 }
