@@ -35,14 +35,14 @@ public class ProductEventConsumer {
         CrudEventDTO crudEventDTO = objectMapper.readValue(snsMessage.getMessage(), CrudEventDTO.class);
         ProductDTO productDTO = objectMapper.readValue(crudEventDTO.getData(), ProductDTO.class);
 
-        ProductEvent productEvent = buildProductEvent(crudEventDTO, productDTO);
+        ProductEvent productEvent = buildProductEvent(crudEventDTO, productDTO, snsMessage.getMessageId());
         productEventRepository.save(productEvent);
 
         log.info("Product event received - Event: {} - ProductId: {} - MessageId: {}",
                 crudEventDTO.getEventType(), productDTO.getId(), snsMessage.getMessageId());
     }
 
-    private ProductEvent buildProductEvent(CrudEventDTO crudEventDTO, ProductDTO productDTO) {
+    private ProductEvent buildProductEvent(CrudEventDTO crudEventDTO, ProductDTO productDTO, String messageId) {
 
         ProductEvent productEvent = new ProductEvent();
         long timestamp = Instant.now().toEpochMilli();
@@ -51,6 +51,7 @@ public class ProductEventConsumer {
         productEvent.setEventType(crudEventDTO.getEventType());
         productEvent.setProductId(productDTO.getId());
         productEvent.setUsername(productDTO.getUsername());
+        productEvent.setMessageId(messageId);
         productEvent.setTimestamp(timestamp);
         productEvent.setTtl(Instant.now().plus(Duration.ofMinutes(10)).getEpochSecond()); //Em aprox 10 minutos o dynamo vai remover esse registro
         log.info("Product event builded: {}", productEvent.toString());
