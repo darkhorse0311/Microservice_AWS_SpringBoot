@@ -44,7 +44,7 @@ public class InvoiceAppStack extends Stack {
         bucket.addEventNotification(EventType.OBJECT_CREATED_PUT, new SnsDestination(s3InvoiceTopic.getTopic()));
 
         Queue s3invoiceDql = Queue.Builder.create(this, "S3InvoiceDlq")
-                .queueName("s3-invoice-events-dls")
+                .queueName("s3-invoice-events-dlq")
                 .build();
 
         DeadLetterQueue deadLetterQueue = DeadLetterQueue.builder()
