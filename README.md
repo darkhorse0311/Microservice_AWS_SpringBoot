@@ -23,10 +23,10 @@
       - Definido o aplication load balancer para este serviço.
     - Serviço 02:
       - Ouve os eventos de CREATED, UPDATED e DELETED dos produtos persistidos no serviço 01.
-      - Os eventos são consumidos através de uma fila do SQS que foi inscrita no tópico do SNS. Definido também a dead letter queue desta fil
-      - Persiste no DynamoDB os eventos recebidos
+      - Os eventos são consumidos através de uma fila do SQS que foi inscrita no tópico do SNS. Definido também a dead letter queue desta fila.
+      - Persiste no DynamoDB os eventos recebidos.
       - Criado um endpoint para listar os eventos dos produtos persistidos.
-      - Definido um auto scaling da tabela do DynamoDB e analisar as suas métricas
+      - Definido um auto scaling da tabela do DynamoDB e analisar as suas métricas.
       - Definido um auto scaling para esse serviço de no máximo 4 instâncias.
       - Definido o aplication load balancer para este serviço.    
  - Realizados testes de carga para analisar a performance do dynamo.
