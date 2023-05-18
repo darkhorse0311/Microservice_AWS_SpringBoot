@@ -8,6 +8,8 @@ import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedTaskI
 import software.amazon.awscdk.services.elasticloadbalancingv2.HealthCheck;
 import software.amazon.awscdk.services.events.targets.SnsTopic;
 import software.amazon.awscdk.services.logs.LogGroup;
+import software.amazon.awscdk.services.s3.Bucket;
+import software.amazon.awscdk.services.sqs.Queue;
 import software.constructs.Construct;
 
 import java.util.HashMap;
@@ -18,11 +20,11 @@ public class Service01Stack extends Stack {
     public static final String ACTUATOR_HEALTH = "/actuator/health";
     public static final String ACTUATOR_PORT = "8080";
 
-    public Service01Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productEventsTopic) {
-        this(scope, id, null, cluster, productEventsTopic);
+    public Service01Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productEventsTopic, Bucket invoicebucket, Queue invoiceQueue) {
+        this(scope, id, null, cluster, productEventsTopic, invoicebucket, invoiceQueue);
     }
 
-    public Service01Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productEventsTopic) {
+    public Service01Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productEventsTopic, Bucket invoicebucket, Queue invoiceQueue) {
         super(scope, id, props);
 
         Map<String, String> environments = new HashMap<>();
@@ -30,7 +32,9 @@ public class Service01Stack extends Stack {
         environments.put("SPRING_DATASOURCE_USERNAME", "admin");
         environments.put("SPRING_DATASOURCE_PASSWORD",  Fn.importValue("rds-password"));
         environments.put("AWS_REGION",  "us-east-1");
-        environments.put("AWS_SNS_TOPIC_PRODUCT_EVENTS_ARN",  productEventsTopic.getTopic().getTopicArn());
+        environments.put("AWS_SNS_TOPIC_PRODUCT_EVENTS_ARN", productEventsTopic.getTopic().getTopicArn());
+        environments.put("AWS_S3_BUCKET_INVOICE_NAME", invoicebucket.getBucketName());
+        environments.put("AWS_SQS_QUEUE_INVOICE_EVENTS_NAME", invoiceQueue.getQueueName());
 
         ApplicationLoadBalancedFargateService service01 = ApplicationLoadBalancedFargateService.Builder
                 .create(this, "ALB01")
@@ -44,7 +48,7 @@ public class Service01Stack extends Stack {
                 .taskImageOptions(
                         ApplicationLoadBalancedTaskImageOptions.builder()
                                 .containerName("aws_project01")
-                                .image(ContainerImage.fromRegistry("rodrigolucio/service01:0.0.7"))
+                                .image(ContainerImage.fromRegistry("rodrigolucio/service01:0.0.10"))
                                 .containerPort(8080)
                                 .logDriver(LogDriver.awsLogs(AwsLogDriverProps.builder()
                                                 .logGroup(LogGroup.Builder.create(this, "Service01LogGroup")
@@ -80,6 +84,9 @@ public class Service01Stack extends Stack {
 
         //define que o meu serviço pode publicar mensagens no meu topico
         productEventsTopic.getTopic().grantPublish(service01.getTaskDefinition().getTaskRole());
+
+        invoiceQueue.grantConsumeMessages(service01.getTaskDefinition().getTaskRole());
+        invoicebucket.grantReadWrite(service01.getTaskDefinition().getTaskRole());
 
     }
 }
