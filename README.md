@@ -31,3 +31,4 @@
       - Definido o aplication load balancer para este serviço.    
  - Realizados testes de carga para analisar a performance do DynamoDB.
 
+☑️ Curso feito com o objetivo conhecer alguns serviços na AWS e itegrá-los com o Spring.
