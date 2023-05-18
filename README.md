@@ -29,5 +29,5 @@
       - Definido um auto scaling da tabela do DynamoDB e analisar as suas métricas.
       - Definido um auto scaling para esse serviço de no máximo 4 instâncias.
       - Definido o aplication load balancer para este serviço.    
- - Realizados testes de carga para analisar a performance do dynamo.
+ - Realizados testes de carga para analisar a performance do DynamoDB.
 
