@@ -11,7 +11,7 @@
 - Serviços:
     - Serviço 01:
       - Criado um CRUD de produtos, onde os mesmos são salvos no RDS.
-      - Publica eventos de CREATED, UPDATED e DELETED no em um tópico do SNS.
+      - Publica eventos de CREATED, UPDATED e DELETED em um tópico do SNS.
       - Criado um endpoint para solicitar URLs de upload, que fica disponível por um tempo pré definido. 
       - Com a URL disponibilizada, é possível fazer o upload de um arquivo de notas fiscais para um bucket no S3.
       - Quando o upload do arquivo é finalizado no bucket, é publicado um evento no SNS.
@@ -26,7 +26,7 @@
       - Os eventos são consumidos através de uma fila do SQS que foi inscrita no tópico do SNS. Definido também a dead letter queue desta fila.
       - Persiste no DynamoDB os eventos recebidos.
       - Criado um endpoint para listar os eventos dos produtos persistidos.
-      - Definido um auto scaling da tabela do DynamoDB e analisar as suas métricas.
+      - Definido um auto scaling da tabela do DynamoDB e analisado as suas métricas.
       - Definido um auto scaling para esse serviço de no máximo 4 instâncias.
       - Definido o aplication load balancer para este serviço.    
  - Realizados testes de carga para analisar a performance do DynamoDB.
