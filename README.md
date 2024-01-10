@@ -17,7 +17,7 @@
       - Com a URL disponibilizada, é possível fazer o upload de um arquivo de notas fiscais para um bucket no S3.
       - Quando o upload do arquivo é finalizado, é publicado um evento em outro tópico do SNS.
       - Inscrito neste outro tópico do SNS, uma fila do SQS onde serão publicados os eventos. Definido também a dead letter queue desta fila.
-      - Criado um listener para consumir esta fila do SQS, onde o arquivo da nota fiscal é buscado no bucket do S3 e salvo no banco RDS.
+      - Criado um listener para consumir esta fila do SQS, onde o arquivo da nota fiscal é buscado no bucket do S3 e salvo algumas das informações do arquivo no banco RDS.
       - Criado um endpoint para listar as notas fiscais importadas.
     - Serviço 02:
       - Ouve os eventos de CREATED, UPDATED e DELETED dos produtos persistidos no serviço 01.
